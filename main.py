@@ -19,23 +19,28 @@ for x in range(1, 2):
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
     driver.get(url+str(x))
-    # state = driver.find_elements(By.XPATH, '//*[@id="wrapper"]/div/div/div/table/tbody/tr/td/span/span[contains(@href, "/canada")]')
+    states = driver.find_elements(By.CSS_SELECTOR, 'span.crumbtrail-partial > :first-child')
+    area = driver.find_elements(By.CSS_SELECTOR, 'span.crumbtrail-partial > :nth-child(2)')
+    crag = driver.find_elements(By.CSS_SELECTOR, 'span.crumbtrail-partial > :nth-child(3)')
     grades  = driver.find_elements(By.CLASS_NAME, "pull-right")
     routes = driver.find_elements(By.CLASS_NAME, "route")
-    desc = driver.find_elements(By.CLASS_NAME, "markdown")
-    tags = driver.find_elements(By.CLASS_NAME, "tags")
+    desc = driver.find_elements(By.CSS_SELECTOR, "td.rt_name > :nth-child(2) > p")
+    tags = driver.find_elements(By.CLASS_NAME, "tags ")
+
+    for item in desc: 
+        print(item.text)
     
-    for (e, s, y, t) in zip(grades,routes, tags, desc):
+    for (e, s, y, t, g, a, b) in zip(grades,routes, tags, desc, states, area, crag):
     
-        
         spotItem = {
             'country': 'canada',
-            # 'state': g.text,
-            # 'crag': g.text.split()[1],
-            'spot': {
+            'state': g.text,
+            'area': a.text,
+            'crag': b.text,
+            'route': {
                  'name': s.text,
                 'grade': e.text,
-                # 'description':,
+                'description': t.text,
                 'tags': y.text
             },
             'done': False,
@@ -48,8 +53,6 @@ for x in range(1, 2):
 
 
 df = pd.DataFrame(spotLists)
-print(df.head())
-
 df.to_json('spot.json', orient='records')
 
 driver.close()
