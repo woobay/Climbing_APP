@@ -13,41 +13,48 @@ import time
 # c.execute('''CREATE TABLE Spot(grade TEXT, name TEXT, description TEXT, tags TEXT)''')
 
 spotLists = []
-for x in range(1, 2):
+for x in range(1, 3):
 
     url = 'https://www.thecrag.com/en/climbing/canada/routes?page='
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
-
     driver.get(url+str(x))
-    states = driver.find_elements(By.CSS_SELECTOR, 'span.crumbtrail-partial > :first-child')
-    area = driver.find_elements(By.CSS_SELECTOR, 'span.crumbtrail-partial > :nth-child(2)')
-    crag = driver.find_elements(By.CSS_SELECTOR, 'span.crumbtrail-partial > :nth-child(3)')
-    grades  = driver.find_elements(By.CLASS_NAME, "pull-right")
-    routes = driver.find_elements(By.CLASS_NAME, "route")
-    desc = driver.find_elements(By.CSS_SELECTOR, "td.rt_name > :nth-child(2) > p")
-    tags = driver.find_elements(By.CLASS_NAME, "tags ")
 
-    
-    for (e, s, y, t, g, a, b) in zip(grades,routes, tags, desc, states, area, crag):
-    
+    rows = driver.find_elements(By.CSS_SELECTOR, 'tr.actionable')
+
+    for td in rows: 
+       
+        states = td.find_element(By.XPATH, '//*[@id="wrapper"]/div[2]/div[3]/div/table/tbody/tr[2]/td/span/span[1]').text
+        area = td.find_element(By.XPATH, '//*[@id="wrapper"]/div[2]/div[3]/div/table/tbody/tr[2]/td/span/span[2]').text
+        crag = td.find_element(By.XPATH, '//*[@id="wrapper"]/div[2]/div[3]/div/table/tbody/tr[2]/td/span/span[3]').text
+        grades  = td.find_element(By.CLASS_NAME, "pull-right").text
+        routes = td.find_element(By.CLASS_NAME, "route").text
+        tags = td.find_element(By.CLASS_NAME, "tags ").text
+
+        try: 
+            desc = td.find_element(By.CLASS_NAME, "markdown").text
+        except:
+            desc = "No description."
+
         spotItem = {
             'country': 'canada',
-            'state': g.text,
-            'area': a.text,
-            'crag': b.text,
+            'state': states,
+            'area': area,
+            'crag': crag,
             'route': {
-                 'name': s.text,
-                'grade': e.text,
-                'description': t.text,
-                'tags': y.text
+                 'name': routes,
+                'grade': grades,
+                'description': desc,
+                'tags': tags
             },
             'done': False,
            
         }
 
-
         time.sleep(0.03)
         spotLists.append(spotItem)
+
+
+
 
 df = pd.DataFrame(spotLists)
 
