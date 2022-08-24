@@ -27,8 +27,6 @@ for x in range(1, 2):
     desc = driver.find_elements(By.CSS_SELECTOR, "td.rt_name > :nth-child(2) > p")
     tags = driver.find_elements(By.CLASS_NAME, "tags ")
 
-    for item in desc: 
-        print(item.text)
     
     for (e, s, y, t, g, a, b) in zip(grades,routes, tags, desc, states, area, crag):
     
@@ -51,8 +49,8 @@ for x in range(1, 2):
         time.sleep(0.03)
         spotLists.append(spotItem)
 
-
 df = pd.DataFrame(spotLists)
+
 df.to_json('spot.json', orient='records')
 
 driver.close()
