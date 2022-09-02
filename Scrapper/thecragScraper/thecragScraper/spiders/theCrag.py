@@ -25,7 +25,9 @@ class TheCragSpider(scrapy.Spider):
             yield item
 
             
-        # next_page = response.css('li.next a').attrib['href']
+        next_page = response.css('li.next a').attrib['href']
 
-        # if next_page is not None:
-        #     yield response.follow(next_page, callback=self.parse)
+        if next_page is not None:
+            yield response.follow(next_page, callback=self.parse)
+
+            # >>> response.css('td.group span:nth-child(2) a::text').getall()
