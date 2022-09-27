@@ -46,5 +46,61 @@ exports.getAllSpots = async (req, res) => {
 
 
 exports.getSpotByName = async (req, res) => {
-   
+   try {
+        const name = req.params.name
+        Spot.find({'route.name': { $regex: name, $options: 'i'}}, (err, spots) => {
+                if (err) {
+                        res.send(500).send({
+                                errorCode: "SERVER_ERROR",
+                                message: 'An error occurred while retrieving the name of the spot'
+                        })
+                        return
+                } else {
+                        res.status(200).send({
+                                message: 'SEARCH_COMPLETED_SUCCESSFULLY',
+                                spots
+                        })
+                        return
+                }
+        })
+        
+   } catch (e) {
+        res.status(500).send({
+                errorCode: "SERVER_ERROR",
+                message: 'An error occurred while retrieving the spot'
+        })
+        return
+   }
+}
+
+exports.getSpotByArea = async (req, res) => {
+        const limit = parseInt(req.query.limit) || 10
+        const page = parseInt(req.query.page) || 1
+        try {
+                const name = req.params.name
+                Spot.find({area: { $regex: name, $options: 'i'}}, (err, spots) => {
+                        if (err) {
+                                res.send(500).send({
+                                        errorCode: "SERVER_ERROR",
+                                        message: 'An error occurred while retrieving the name of the spot'
+                                })
+                                return
+                        } else {
+                                res.status(200).send({
+                                        message: 'SEARCH_COMPLETED_SUCCESSFULLY',
+                                        spots
+                                })
+                                return
+                        }
+                })
+                .skip(limit * (page - 1))
+                .limit(limit)
+                
+           } catch (e) {
+                res.status(500).send({
+                        errorCode: "SERVER_ERROR",
+                        message: 'An error occurred while retrieving the spot'
+                })
+                return
+           } 
 }
