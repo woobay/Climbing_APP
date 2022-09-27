@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const climbSpotSchema = mongoose.Schema({}).add({
+const climbSpotSchema = new mongoose.Schema({}).add({
     id: String,
     country: String,
     state: String,
