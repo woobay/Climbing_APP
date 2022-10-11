@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({}).add({
     id: String,
     name: String,
     email: String,
-    spots: [{type: Spot}],
+    spots: [{type: mongoose.Schema.ObjectId}],
     password: String
 })
 
